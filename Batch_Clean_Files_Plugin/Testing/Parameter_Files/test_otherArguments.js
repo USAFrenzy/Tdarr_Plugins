@@ -9,7 +9,7 @@ let test_otherArguments =
     workerType: 'transcodegpu',
     version: '2.00.20',
     platform_arch_isdocker: 'win32_x64_docker_false',
-    cacheFilePath: 'C:/Transcode/Cache Folder/qsv_h264-TdarrCacheFile-1FSl77HmK.mkv' // suggested cache file path if using custom transcode settings
+    cacheFilePath: '../Mock_Folder_Structure/tdarr/tdarr_cache/RandomlyGenNamedFolder/Log Horizon (2013) - S02E05 - 030 - Christmas Eve [Bluray-1080p][10bit][x264][FLAC 2.0][EN+JA]-CTR.mkv'
 };
 
 const _test_otherArguments = test_otherArguments;

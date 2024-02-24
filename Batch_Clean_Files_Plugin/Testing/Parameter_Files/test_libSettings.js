@@ -1,60 +1,101 @@
 let test_libSettings = {
-    _id: '0foppn1Hf',
-    name: 'Test',
-    priority: 0,
-    folder: 'C:/Transcode/Source Folder',
-    foldersToIgnore: 'segments',
-    folderWatchScanInterval: 30,
-    scannerThreadCount: 2,
-    cache: 'C:/Transcode/Cache Folder',
-    output: 'C:/Transcode/Output Folder',
-    folderToFolderConversion: false,
-    folderToFolderConversionDeleteSource: false,
-    copyIfConditionsMet: false,
-    container: '.mkv',
-    containerFilter: 'mkv,mp4,mov,m4v,mpg,mpeg,avi,flv,webm,wmv,vob,evo,iso,m2ts,ts,mp3,aac,m4a,wav,flac,ogg,pcm,aiff,aac,wma,alac',
-    createdAt: 1620557629117,
-    folderWatching: false,
-    useFsEvents: false,
-    scheduledScanFindNew: false,
-    processLibrary: true,
-    scanOnStart: false,
-    exifToolScan: true,
-    mediaInfoScan: true,
-    closedCaptionScan: false,
-    scanButtons: true,
-    scanFound: 'Files found:0',
-    expanded: true,
-    navItemSelected: 'navSourceFolder',
-    pluginIDs: [[Object], [Object]],
-    pluginCommunity: false,
-    handbrake: true,
-    ffmpeg: false,
-    handbrakescan: true,
-    ffmpegscan: false,
-    preset: '--preset-import-file "C:/app/testpreset.json" -Z "My Preset"',
-    decisionMaker: {
-        settingsPlugin: true,
-        settingsVideo: false,
-        videoExcludeSwitch: true,
-        video_codec_names_exclude: [Array],
-        video_size_range_include: [Object],
-        video_height_range_include: [Object],
-        video_width_range_include: [Object],
-        settingsAudio: false,
-        audioExcludeSwitch: true,
-        audio_codec_names_exclude: [Array],
-        audio_size_range_include: [Object]
+    "_id": "123456789",
+    "priority": 0,
+    "name": "Anime",
+    "folder": "../Mock_Folder_Structure/Qbit/Downloads/Anime",
+    "foldersToIgnore": "",
+    "folderWatchScanInterval": "180",
+    "scannerThreadCount": "8",
+    "cache": "../Mock_Folder_Structure/tdarr/tdarr_cache/",
+    "output": "../Mock_Folder_Structure/tdarr/tdarr_transcodes/Anime/",
+    "folderToFolderConversion": true,
+    "folderToFolderConversionDeleteSource": false,
+    "folderToFolderRecordHistory": true,
+    "copyIfConditionsMet": true,
+    "container": ".mkv",
+    "containerFilter": "mkv,mp4,mov,m4v,mpg,mpeg,avi,flv,webm,wmv,vob,evo,iso,m2ts,ts",
+    "createdAt": 1675837380368,
+    "folderWatching": true,
+    "useFsEvents": false,
+    "scheduledScanFindNew": true,
+    "processLibrary": true,
+    "processTranscodes": true,
+    "processHealthChecks": true,
+    "scanOnStart": true,
+    "exifToolScan": true,
+    "mediaInfoScan": true,
+    "closedCaptionScan": true,
+    "scanButtons": true,
+    "scanFound": "Files found:0",
+    "navItemSelected": "navSourceFolder",
+    "pluginIDs": [],
+    "pluginCommunity": true,
+    "handbrake": true,
+    "ffmpeg": false,
+    "handbrakescan": false,
+    "ffmpegscan": true,
+    "preset": "-Z \"Fast 1080p30\"",
+    "decisionMaker": {
+        "settingsPlugin": false,
+        "settingsVideo": false,
+        "videoExcludeSwitch": true,
+        "video_codec_names_exclude": [
+            {
+                "codec": "hevc",
+                "checked": false
+            },
+            {
+                "codec": "h264",
+                "checked": true
+            }
+        ],
+        "video_size_range_include": {
+            "min": 0,
+            "max": 100000
+        },
+        "video_height_range_include": {
+            "min": 0,
+            "max": 3000
+        },
+        "video_width_range_include": {
+            "min": 0,
+            "max": 4000
+        },
+        "settingsAudio": false,
+        "audioExcludeSwitch": true,
+        "audio_codec_names_exclude": [
+            {
+                "codec": "mp3",
+                "checked": true
+            },
+            {
+                "codec": "aac",
+                "checked": false
+            }
+        ],
+        "audio_size_range_include": {
+            "min": 0,
+            "max": 10
+        },
+        "settingsFlows": true
     },
-    schedule: '',
-    totalHealthCheckCount: 22,
-    totalTranscodeCount: 765,
-    sizeDiff: 0.4010190861299634,
-    holdNewFiles: false,
-    holdFor: 3600,
-    local: true,
-    community: true,
-    pluginStackOverview: false
+    "schedule": [
+        {
+            "_id": "Sun:00-01",
+            "checked": true
+        },
+    ],
+    "totalHealthCheckCount": 0,
+    "totalTranscodeCount": 815,
+    "sizeDiff": 977.8674234645441,
+    "holdNewFiles": false,
+    "holdFor": 3600,
+    "pluginStackOverview": true,
+    "filterResolutionsSkip": "",
+    "filterCodecsSkip": "",
+    "filterContainersSkip": "",
+    "processPluginsSequentially": true,
+    "flowId": "e8MNZTPLF"
 }
 
 const _test_libSettings = test_libSettings;
