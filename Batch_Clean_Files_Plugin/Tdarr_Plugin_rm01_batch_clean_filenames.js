@@ -195,7 +195,11 @@ function GetUserRegex(customTerms) {
         term = '\\b' + term + '\\b';
         return term;
     }).join('|');
-    return new RegExp(customTermsRegex, 'gi');
+    if (customTermsRegex === '\\b\\b') {
+        return new RegExp('')
+    } else {
+        return new RegExp(customTermsRegex, 'gi');
+    }
 }
 
 
@@ -217,14 +221,29 @@ function ValidatePath(directory) {
 }
 
 
+// Weird bug present in the original code. The original code would fail to create
+// directories even if the path was valid which resulted in the ENOENT error.
+//  - Reference: https://github.com/nodejs/node/issues/27293
 function CreateDirectories(dirPath) {
     const fs = require('fs');
-    if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(NormalizePath(dirPath), { recursive: true });
+    const path = require('path');
+    if (fs.existsSync(dirPath)) { return true; }
+    const dirName = path.dirname(dirPath);
+    CreateDirectories(dirName);
+    fs.mkdirSync(dirPath);
+    return ValidatePath(dirPath);
+}
+
+function ValidatePathAndCreateMissing(dirPath, response) {
+    if (!(ValidatePath(dirPath))) {
+        response.infoLog += `\\nThe directory path ${dirPath} is invalid or does not exist.\\nTrying To Create Missing Directories\\n`;
+        if (!CreateDirectories(dirPath)) {
+            response.infoLog += `An error occurred when trying to add missing directories to path ${dirPath}: ${error.message}\\n`;
+            return false; // If the directory path is invalid, return early and skip this entry
+        }
     }
     return true;
 }
-
 
 function RenameFile(oldFilePath, filterAudio, filterVideo, userRegex, response) {
     const fs = require('fs');
@@ -287,59 +306,47 @@ function IsVideoFile(file) {
 function ProcessFile(fullPath, filterAudio, filterVideo, userRegex, libSettings, response, workingDir) {
     const fs = require('fs');
     const path = require('path');
+
     let currentFileInDir = path.basename(fullPath);
-    // relativePathToFile gives me the chunk of the path minus the source root directory
-    // relativeOutputPath gives me the chunk of the path minus the output root directory
-    // I can then join the output root directory with the relative output path to get the full output path
     let relativePathToFile = NormalizePath(path.relative(libSettings.folder, fullPath));
-    let relativeOutputPath = NormalizePath(path.relative(libSettings.output, relativePathToFile));
-    let fullOutputPath = NormalizePath(path.join(libSettings.output, relativeOutputPath));
-    let outputDir = NormalizePath(path.dirname(fullOutputPath)); // The output directory to copy the cleaned files to
+    let fullOutputPath = NormalizePath(path.join(libSettings.output, relativePathToFile));
+    let outputDir = NormalizePath(path.dirname(fullOutputPath));
+    let workingFilePath = NormalizePath(path.join(path.dirname(workingDir), relativePathToFile));
+    let workingFileDir = path.dirname(workingFilePath);
 
-    // Get the full path to the working directory and add the current file to the path
-    let workingFilePath = NormalizePath(path.join(path.dirname(workingDir), currentFileInDir));
+    response.infoLog += `\\n- Processing File: [${currentFileInDir}]\\n`;
 
-    if (!(ValidatePath(outputDir))) {
-        response.infoLog += `\\nThe directory path ${outputDir} is invalid or does not exist.\\nTrying To Create Missing Directories\\n`;
-        if (!CreateDirectories(outputDir)) {
-            response.infoLog += `An error occurred when trying to add missing directories to path ${outputDir}: ${error.message}\\n`;
-            return; // If the directory path is invalid, return early and skip this entry
-        }
+    if (!ValidatePathAndCreateMissing(outputDir, response)) {
+        return;
     }
     // The output directory path exists and is valid, so we can proceed with the file processing
-    let actualTdarrFile = path.basename(NormalizePath(response.file.file));
-
-    if (currentFileInDir !== actualTdarrFile) {
+    if (currentFileInDir !== path.basename(NormalizePath(response.file.file))) {
         if (IsVideoFile(fullPath)) {
             response.infoLog += `- [${currentFileInDir}] Is A Video File Possibly Tracked By Tdarr, But Not The File We Are Currently Concerned With - Skipping.\\n`;
             return;
         } else {
             response.infoLog += `- [${currentFileInDir}] Is Not A Video File - Copying File Over To Work On\\n`;
-            if(!ValidatePath(path.dirname(workingFilePath)))
-            {
-                response.infoLog += `\\nThe directory path ${path.dirname(workingFilePath)} is invalid or does not exist.\\nTrying To Create Missing Directories\\n`;
-                if (!CreateDirectories(path.dirname(workingFilePath))) {
-                    response.infoLog += `An error occurred when trying to add missing directories to path ${path.dirname(workingFilePath)}: ${error.message}\\n`;
-                    return; // If the directory path is invalid, return early and skip this entry
+            if (!fs.existsSync(workingFilePath)) {
+                if (!ValidatePathAndCreateMissing(workingFileDir, response)) {
+                    return;
                 }
-            }
-            if(!fs.existsSync(workingFilePath)){
                 fs.copyFileSync(fullPath, workingFilePath);
-            }else{
+            } else {
                 response.infoLog += `- [${currentFileInDir}] Already Exists In The Working Directory\\n`;
             }
-           // fs.copyFileSync(fullPath, fullOutputPath);
         }
     } else {
         response.infoLog += `- [${currentFileInDir}] Is The File We Are Currently Concerned With In This Track\\n`;
-        if(!fs.existsSync(workingFilePath)){
+        if (!fs.existsSync(workingFilePath)) {
+            if (!ValidatePathAndCreateMissing(workingFileDir, response)) {
+                return;
+            }
             fs.copyFileSync(fullPath, workingFilePath);
-        }else{
+        } else {
             response.infoLog += `- [${currentFileInDir}] Already Exists In The Working Directory\\n`;
         }
     }
     RenameFile(workingFilePath, filterAudio, filterVideo, userRegex, response);
-    // RenameFile(fullOutputPath, filterAudio, filterVideo, userRegex, response);
 }
 
 function ProcessDirectory(directoryPath, allFilesInDir, extensions, filterAudio, filterVideo, userRegex, libSettings, response, workingDir) {
@@ -403,8 +410,8 @@ const plugin = (file, libSettings, inputs, otherArguments) => {
     const userRegex = GetUserRegex(inputs.Terms_To_Filter);
     // Sanitize and then normalize the extensions to filter
     const extensions = inputs.Extensions_To_Filter.split(',')
-    .map(extension => extension.trim().replace('.', ''))
-    .map(extension => '.' + extension);
+        .map(extension => extension.trim().replace('.', ''))
+        .map(extension => '.' + extension);
     let workingFilePath = otherArguments.cacheFilePath;
     response.infoLog += `Working Directory: ${workingFilePath}\\n\\n`;
     ScanDirectory(NormalizePath(path.dirname(file.file)), extensions, filterAudio, filterVideo, userRegex, libSettings, response, workingFilePath);

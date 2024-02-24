@@ -1,13 +1,14 @@
-let test_libSettings = {
+function test_libSettings() {
+return libSettings = {
     "_id": "123456789",
     "priority": 0,
     "name": "Anime",
-    "folder": "../Mock_Folder_Structure/Qbit/Downloads/Anime",
+    "folder": "E:/Dev/Tdarr_Plugins/Batch_Clean_Files_Plugin/Testing/Mock_Folder_Structure/Qbit/Downloads/Anime",
     "foldersToIgnore": "",
     "folderWatchScanInterval": "180",
     "scannerThreadCount": "8",
-    "cache": "../Mock_Folder_Structure/tdarr/tdarr_cache/",
-    "output": "../Mock_Folder_Structure/tdarr/tdarr_transcodes/Anime/",
+    "cache": "E:/Dev/Tdarr_Plugins/Batch_Clean_Files_Plugin/Testing/Mock_Folder_Structure/tdarr/tdarr_cache/",
+    "output": "E:/Dev/Tdarr_Plugins/Batch_Clean_Files_Plugin/Testing/Mock_Folder_Structure/tdarr/tdarr_transcodes/Anime/",
     "folderToFolderConversion": true,
     "folderToFolderConversionDeleteSource": false,
     "folderToFolderRecordHistory": true,
@@ -97,6 +98,5 @@ let test_libSettings = {
     "processPluginsSequentially": true,
     "flowId": "e8MNZTPLF"
 }
-
-const _test_libSettings = test_libSettings;
-export { _test_libSettings as test_libSettings };
+}
+module.exports.test_libSettings = test_libSettings;

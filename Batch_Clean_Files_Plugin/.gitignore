@@ -1,1 +1,6 @@
 /Testing/Mock_Folder_Structure/Qbit/Downloads/Anime/Log Horizon/Season 2/*.mkv
+/Testing/Mock_Folder_Structure/tdarr/tdarr_cache/*.mkv
+/Testing/Mock_Folder_Structure/tdarr/tdarr_cache/RandomlyGenNamedFolder
+/Testing/Mock_Folder_Structure/tdarr/tdarr_transcodes/*.mkv
+/Testing/Mock_Folder_Structure/tdarr/tdarr_transcodes/Anime
+
