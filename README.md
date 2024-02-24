@@ -1,0 +1,2 @@
+This repo is simply hosting plugins that I'm working on for my Tdarr deployments in my home lab.
+These plugins are as-is but please note that they may or may not work as this is for my own personal use case.
